@@ -1,0 +1,93 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.1</TargetFramework>
+    <AssemblyName>CS2Hooks</AssemblyName>
+    <RootNamespace>CS2Hooks</RootNamespace>
+    <Nullable>enable</Nullable>
+    <LangVersion>11</LangVersion>
+    <!-- Don't emit a .deps.json — CS2 doesn't use it -->
+    <GenerateDependencyFile>false</GenerateDependencyFile>
+    <!-- Copy NuGet package DLLs (i.e. 0Harmony.dll) to the output directory -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <!-- Suppress assembly version conflict warnings from mixing game DLLs with netstandard2.1 -->
+    <MSBuildWarningsAsMessages>MSB3277</MSBuildWarningsAsMessages>
+    <ModsDeployPath>$(APPDATA)\..\LocalLow\Colossal Order\Cities Skylines II\Mods\CS2Hooks</ModsDeployPath>
+  </PropertyGroup>
+
+  <!-- Harmony — bundled with the mod.
+       Lib.Harmony has no netstandard2.1 target, so we reference the net48 build
+       directly from the NuGet cache. Private=true ensures it copies to output. -->
+  <ItemGroup>
+    <Reference Include="0Harmony">
+      <HintPath>$(USERPROFILE)\.nuget\packages\lib.harmony\2.3.3\lib\net48\0Harmony.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Exclude reference sources — for reading only, not compilation -->
+  <ItemGroup>
+    <Compile Remove="decompiled\**" />
+    <Compile Remove="cs2m_repo\**" />
+  </ItemGroup>
+
+  <!-- Runtime refs needed to resolve ReadOnlySpan used in Unity.Entities APIs -->
+  <ItemGroup>
+    <Reference Include="System.Runtime">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\System.Runtime.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="System.Memory">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\System.Memory.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- CS2 game assemblies — NOT bundled (already present in the game) -->
+  <ItemGroup>
+    <Reference Include="Game">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Game.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.Entities">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Entities.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.Collections">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Collections.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.Mathematics">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Mathematics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.Burst">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Unity.Burst.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Colossal.Core">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Core.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Colossal.Mathematics">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Mathematics.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Colossal.Logging">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\Colossal.Logging.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>D:\Steam\steamapps\common\Cities Skylines II\Cities2_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- Auto-deploy to the CS2 local Mods folder after every successful build -->
+  <Target Name="DeployToMods" AfterTargets="Build">
+    <Message Text="Deploying to $(ModsDeployPath)" Importance="high" />
+    <Copy SourceFiles="$(OutputPath)CS2Hooks.dll"  DestinationFolder="$(ModsDeployPath)" />
+    <Copy SourceFiles="$(OutputPath)0Harmony.dll"  DestinationFolder="$(ModsDeployPath)" />
+  </Target>
+
+</Project>

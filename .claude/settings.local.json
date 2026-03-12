@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(winget --version)",
+      "Bash(winget install Microsoft.DotNet.SDK.9 --accept-package-agreements --accept-source-agreements)",
+      "Bash(grep -v \"//\")",
+      "Bash(xargs cat)",
+      "Bash(dotnet build)",
+      "Bash(ls \"c:/Users/npete/Documents/Code/CS2_Events/\"*.csproj \"c:/Users/npete/Documents/Code/CS2_Events/\"*.sln)",
+      "Bash(dotnet build CS2Hooks.csproj)",
+      "Bash(powershell -Command \"[System.Diagnostics.FileVersionInfo]::GetVersionInfo\\(''D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2.exe''\\) | Select-Object FileVersion, ProductVersion\")",
+      "Bash(powershell -Command \"[System.Diagnostics.FileVersionInfo]::GetVersionInfo\\(''D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2_Data\\\\Managed\\\\Game.dll''\\) | Select-Object FileVersion, ProductVersion\")",
+      "Bash(xargs grep -l \"version\\\\|Version\")",
+      "Bash(powershell -Command \"Add-Type -Path ''D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2_Data\\\\Managed\\\\Game.dll''; [System.Reflection.Assembly]::LoadFile\\(''D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2_Data\\\\Managed\\\\Game.dll''\\).GetName\\(\\).Version\")",
+      "Bash(where pwsh)",
+      "Bash(where powershell)",
+      "WebFetch(domain:github.com)",
+      "Bash(git clone --depth 1 https://github.com/CitiesSkylinesMultiplayer/CS2M.git cs2m_repo)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:api.github.com)",
+      "Bash(ls \"D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2_Data\\\\Managed\"\" | grep -i \"System.Runtime|System.Memory|netstandard \")",
+      "Bash(ls \"D:\\\\Steam\\\\steamapps\\\\common\\\\Cities Skylines II\\\\Cities2_Data\\\\Managed\"\" | grep -i \"mscorlib|netstandard \")",
+      "Bash(grep -E \"^d|\\\\.cs$|\\\\.csproj\")"
+    ]
+  }
+}

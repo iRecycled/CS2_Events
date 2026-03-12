@@ -1,0 +1,13 @@
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.csproj.AssemblyReference.cache
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.AssemblyInfoInputs.cache
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.AssemblyInfo.cs
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.csproj.CoreCompileInputs.cache
+C:\Users\npete\Documents\Code\CS2_Events\bin\Debug\netstandard2.1\CS2Hooks.dll
+C:\Users\npete\Documents\Code\CS2_Events\bin\Debug\netstandard2.1\CS2Hooks.pdb
+C:\Users\npete\Documents\Code\CS2_Events\bin\Debug\netstandard2.1\0Harmony.dll
+C:\Users\npete\Documents\Code\CS2_Events\bin\Debug\netstandard2.1\0Harmony.pdb
+C:\Users\npete\Documents\Code\CS2_Events\bin\Debug\netstandard2.1\0Harmony.xml
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.csproj.Up2Date
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.dll
+C:\Users\npete\Documents\Code\CS2_Events\obj\Debug\netstandard2.1\CS2Hooks.pdb
