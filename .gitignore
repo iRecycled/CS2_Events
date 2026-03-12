@@ -1,2 +1,16 @@
-/cs2m_repo
-/decompiled
+# Build artifacts
+/bin/
+/obj/
+
+# IDE
+.vs/
+.vscode/
+*.swp
+*.swo
+
+# Local Claude Code settings
+.claude/
+
+# External/reference repositories
+/cs2m_repo/
+/decompiled/
