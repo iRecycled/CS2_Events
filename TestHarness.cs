@@ -1,3 +1,4 @@
+using System;
 using CS2Hooks.Actions.Apply;
 using CS2Hooks.Events;
 using Game.Simulation;
@@ -46,11 +47,12 @@ internal static class TestHarness
         EventBus.OnObjectDemolished += OnObjectDemolished;
         EventBus.OnRoadPlaced       += OnRoadPlaced;
 
-        EventBus.OnBudgetChanged         += OnBudgetChanged;
-        EventBus.OnTaxRateChanged        += OnTaxRateChanged;
+        EventBus.OnBudgetChanged          += OnBudgetChanged;
+        EventBus.OnTaxRateChanged         += OnTaxRateChanged;
         EventBus.OnResourceTaxRateChanged += OnResourceTaxRateChanged;
-        EventBus.OnLoanChanged           += OnLoanChanged;
-        EventBus.OnServiceFeeChanged     += OnServiceFeeChanged;
+        EventBus.OnLoanChanged            += OnLoanChanged;
+        EventBus.OnServiceFeeChanged      += OnServiceFeeChanged;
+        EventBus.OnPolicyChanged          += OnPolicyChanged;
 
         DebugLogger.Write("[TESTHARNESS]     enabled — place a building, zone, or road then bulldoze to re-apply");
         DebugLogger.Write("[TESTHARNESS]     economy: change tax/loan/fee to trigger revert → re-apply test");
@@ -154,6 +156,22 @@ internal static class TestHarness
         DebugLogger.Write($"[TESTHARNESS]     fee {e.Resource} {e.OldFee:F2}→{e.NewFee:F2} — reverting then re-applying");
         ServiceFeeApplier.Enqueue(e.Resource, e.OldFee, delayFrames: 0);   // revert
         ServiceFeeApplier.Enqueue(e.Resource, e.NewFee, delayFrames: 60);  // re-apply
+    }
+
+    private static void OnPolicyChanged(PolicyChangedEvent e)
+    {
+        if (PolicyApplier.IsApplying) return;
+        // Ignore no-op changes: RequestUpdate causes TicketPriceSection to re-fire SetPolicy
+        // with the same value it just read from the buffer — no actual change, skip it.
+        if (e.OldActive == e.Active && Math.Abs(e.OldAdjustment - e.Adjustment) < 0.01f) return;
+        // Debounce: the ticket price slider fires SetPolicy on every drag tick AND the UI
+        // re-fires after we revert (slider snaps to the reverted value). Ignore new events
+        // for the same target+policy while a revert/re-apply is already pending.
+        if (PolicyApplier.HasPending(e.Target, e.Policy)) return;
+        DebugLogger.Write($"[TESTHARNESS]     policy target={e.Target.Index} policy={e.Policy.Index} " +
+                          $"{e.OldActive}/{e.OldAdjustment:F0}→{e.Active}/{e.Adjustment:F0} — reverting then re-applying");
+        PolicyApplier.Enqueue(e.Target, e.Policy, e.OldActive, e.OldAdjustment, delayFrames: 60);   // revert after ~1s
+        PolicyApplier.Enqueue(e.Target, e.Policy, e.Active,    e.Adjustment,    delayFrames: 120);  // re-apply after ~2s
     }
 
 }

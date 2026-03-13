@@ -192,14 +192,18 @@ public record BudgetChangedEvent(
 /// <summary>
 /// Fired just before a policy is enabled, disabled, or adjusted.
 /// </summary>
-/// <param name="Target">The entity the policy is applied to (city, district, route, etc.).</param>
+/// <param name="Target">The entity the policy is applied to (city, district, route, etc.). Entity.Null for city policies.</param>
 /// <param name="Policy">The policy entity being modified.</param>
+/// <param name="OldActive">Whether the policy was active before this change.</param>
 /// <param name="Active">Whether the policy is being turned on or off.</param>
-/// <param name="Adjustment">The slider value, if this policy has one (0 if not applicable).</param>
+/// <param name="OldAdjustment">The slider value before this change.</param>
+/// <param name="Adjustment">The new slider value (0 if not applicable).</param>
 public record PolicyChangedEvent(
     Entity Target,
     Entity Policy,
+    bool   OldActive,
     bool   Active,
+    float  OldAdjustment,
     float  Adjustment
 );
 

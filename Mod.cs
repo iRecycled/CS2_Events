@@ -30,11 +30,12 @@ public class CS2HooksMod : IMod
         updateSystem.UpdateAt<NetCourseApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<EconomyDebounceSystem>(SystemUpdatePhase.PreTool);
 
-        // [TEST ONLY] economy appliers — remove before shipping
+        // [TEST ONLY] economy/policy appliers — remove before shipping
         updateSystem.UpdateAt<TaxApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<LoanApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<ServiceFeeApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<BudgetApplier>(SystemUpdatePhase.UIUpdate);
+        updateSystem.UpdateAt<PolicyApplier>(SystemUpdatePhase.UIUpdate);
 
         DebugLogger.Enable();
         TestHarness.Enable();

@@ -2,8 +2,11 @@ using System.Reflection;
 using Game;
 using Game.Common;
 using Game.Net;
+using Game.Policies;
 using Game.Prefabs;
+using Game.Routes;
 using Game.Tools;
+using Game.UI.InGame;
 using HarmonyLib;
 using Unity.Entities;
 
@@ -16,13 +19,43 @@ namespace CS2Hooks.Events.Patches;
 /// Two counters:
 ///   NetApplierPatch.DiagFrames     — set to 10 by the two-frame replay (Phase 2).
 ///   DiagPatch.PipelineDiagFrames   — set to 30 by NetToolApplyDiagPatch on a real placement.
+///   DiagPatch.PolicyDiagFrames     — set to 10 by PolicyApplier when it fires.
 ///
 /// Remove or disable before shipping.
 /// </summary>
 static class DiagPatch
 {
-    /// <summary>Set to N to log the pipeline for N more ToolUpdate iterations.</summary>
+    /// <summary>Set to N to log the road pipeline for N more ToolUpdate iterations.</summary>
     public static int PipelineDiagFrames;
+
+    /// <summary>Set to N to log the policy pipeline for N more frames after PolicyApplier fires.</summary>
+    public static int PolicyDiagFrames;
+}
+
+// ── ModifiedSystem — processes [Event, Modify] → updates Policy buffers ───
+[HarmonyPatch(typeof(ModifiedSystem), "OnUpdate")]
+static class ModifiedSystemDiagPatch
+{
+    private static EntityQuery _localQuery;
+    private static bool _queryReady;
+
+    static void Prefix(ModifiedSystem __instance)
+    {
+        if (DiagPatch.PolicyDiagFrames <= 0) return;
+
+        // Build a query once using this system's EntityManager so we can count entities.
+        if (!_queryReady)
+        {
+            _localQuery = __instance.EntityManager.CreateEntityQuery(
+                ComponentType.ReadOnly<Event>(),
+                ComponentType.ReadOnly<Modify>());
+            _queryReady = true;
+        }
+
+        int count = _localQuery.CalculateEntityCount();
+        DebugLogger.Write($"[POLICY DIAG] ModifiedSystem OnUpdate  pending Modify events={count}");
+        DiagPatch.PolicyDiagFrames--;
+    }
 }
 
 // ── Triggered by a real user road placement ───────────────────────────────
@@ -157,5 +190,63 @@ static class LaneDiagPatch
     {
         if (DiagPatch.PipelineDiagFrames <= 0 && NetApplierPatch.DiagFrames <= 0) return;
         DebugLogger.Write("[PIPELINE] LaneSystem OnUpdate (Modification4)");
+    }
+}
+
+// ═════════════════════════════════════════════════════════════════════════════
+// TicketPriceSection diagnostics — trace the UI binding chain to find the break
+// ═════════════════════════════════════════════════════════════════════════════
+
+/// <summary>Set to N to log TicketPriceSection for N more frames.</summary>
+[HarmonyPatch(typeof(TicketPriceSection), "OnProcess")]
+static class TicketPriceOnProcessDiag
+{
+    static void Postfix(TicketPriceSection __instance)
+    {
+        if (DiagPatch.PolicyDiagFrames <= 0) return;
+        // Read the sliderData property via reflection to see what value was captured.
+        var prop = typeof(TicketPriceSection).GetProperty("sliderData",
+            BindingFlags.NonPublic | BindingFlags.Instance);
+        if (prop != null)
+        {
+            var val = prop.GetValue(__instance);
+            float sliderValue = -1f;
+            if (val != null)
+            {
+                var valField = val.GetType().GetField("m_Value",
+                    BindingFlags.NonPublic | BindingFlags.Instance);
+                if (valField != null)
+                    sliderValue = (float)valField.GetValue(val)!;
+            }
+            DebugLogger.Write($"[POLICY DIAG] TicketPriceSection.OnProcess FIRED  m_Value={sliderValue:F2}");
+        }
+        else
+        {
+            DebugLogger.Write("[POLICY DIAG] TicketPriceSection.OnProcess FIRED  (could not read sliderData)");
+        }
+    }
+}
+
+[HarmonyPatch(typeof(TicketPriceSection), "OnWriteProperties")]
+static class TicketPriceWriteDiag
+{
+    static void Prefix()
+    {
+        if (DiagPatch.PolicyDiagFrames <= 0) return;
+        DebugLogger.Write("[POLICY DIAG] TicketPriceSection.OnWriteProperties called");
+    }
+}
+
+[HarmonyPatch(typeof(SelectedInfoUISystem), "OnUpdate")]
+static class SelectedInfoOnUpdateDiag
+{
+    static void Prefix(SelectedInfoUISystem __instance)
+    {
+        if (DiagPatch.PolicyDiagFrames <= 0) return;
+        var em = __instance.EntityManager;
+        var sel = __instance.selectedEntity;
+        bool hasUpdated = sel != Entity.Null && em.Exists(sel) && em.HasComponent<Updated>(sel);
+        DebugLogger.Write($"[POLICY DIAG] SelectedInfoUISystem.OnUpdate  sel={sel.Index}:{sel.Version} hasUpdated={hasUpdated}");
+        DiagPatch.PolicyDiagFrames--;
     }
 }

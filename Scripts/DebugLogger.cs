@@ -62,7 +62,7 @@ internal static class DebugLogger
 
         EventBus.OnPolicyChanged += e =>
             Write($"[POLICY CHANGED]  Target={e.Target.Index} Policy={e.Policy.Index} " +
-                  $"Active={e.Active} Adj={e.Adjustment}");
+                  $"Active={e.OldActive}→{e.Active} Adj={e.OldAdjustment:F0}→{e.Adjustment:F0}");
 
         EventBus.OnTaxRateChanged += e =>
             Write($"[TAX RATE]        {e.AreaType} {e.OldRate}% → {e.NewRate}%");
