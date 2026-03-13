@@ -1,5 +1,8 @@
 using Colossal.Mathematics;
+using Game.City;
+using Game.Economy;
 using Game.Prefabs;
+using Game.Simulation;
 using Game.Tools;
 using Unity.Entities;
 using Unity.Mathematics;
@@ -182,6 +185,7 @@ public record BuildingUpgradedEvent(
 /// <param name="NewPercentage">The new budget percentage (0–200 typically).</param>
 public record BudgetChangedEvent(
     Entity ServicePrefab,
+    int    OldPercentage,
     int    NewPercentage
 );
 
@@ -197,4 +201,69 @@ public record PolicyChangedEvent(
     Entity Policy,
     bool   Active,
     float  Adjustment
+);
+
+// ---------------------------------------------------------------------------
+// Taxes
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// Fired just before an area-level tax rate is changed (Residential, Commercial,
+/// Industrial, or Office).  Also fired once per area when the overall tax slider moves.
+/// </summary>
+/// <param name="AreaType">The tax area being changed.</param>
+/// <param name="OldRate">The current tax rate before the change.</param>
+/// <param name="NewRate">The new tax rate being applied.</param>
+public record TaxRateChangedEvent(
+    TaxAreaType AreaType,
+    int         OldRate,
+    int         NewRate
+);
+
+/// <summary>
+/// Fired just before a resource-specific (or job-level for Residential) tax rate
+/// is changed.
+/// </summary>
+/// <param name="AreaType">The tax area category.</param>
+/// <param name="Resource">
+/// For Residential: the job level (0–4).
+/// For Commercial/Industrial/Office: the <see cref="Game.Economy.Resource"/> value cast to int.
+/// </param>
+/// <param name="OldRate">The current rate before the change.</param>
+/// <param name="NewRate">The new rate being applied.</param>
+public record ResourceTaxRateChangedEvent(
+    TaxAreaType AreaType,
+    int         Resource,
+    int         OldRate,
+    int         NewRate
+);
+
+// ---------------------------------------------------------------------------
+// Loans
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// Fired just before the loan amount is changed (taking or repaying a loan).
+/// </summary>
+/// <param name="OldAmount">The current loan amount before the change.</param>
+/// <param name="NewAmount">The new total loan amount being requested.</param>
+public record LoanChangedEvent(
+    int OldAmount,
+    int NewAmount
+);
+
+// ---------------------------------------------------------------------------
+// Service fees
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// Fired just before a service fee is changed (electricity, water, healthcare, etc.).
+/// </summary>
+/// <param name="Resource">Which player-facing service resource.</param>
+/// <param name="OldFee">The current fee before the change.</param>
+/// <param name="NewFee">The new fee being applied.</param>
+public record ServiceFeeChangedEvent(
+    PlayerResource Resource,
+    float          OldFee,
+    float          NewFee
 );

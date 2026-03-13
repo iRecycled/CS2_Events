@@ -61,6 +61,18 @@ public static class EventBus
     /// <summary>Fired when the player enables, disables, or adjusts a policy.</summary>
     public static event Action<PolicyChangedEvent>? OnPolicyChanged;
 
+    /// <summary>Fired when an area-level tax rate changes.</summary>
+    public static event Action<TaxRateChangedEvent>? OnTaxRateChanged;
+
+    /// <summary>Fired when a resource-specific or job-level tax rate changes.</summary>
+    public static event Action<ResourceTaxRateChangedEvent>? OnResourceTaxRateChanged;
+
+    /// <summary>Fired when the player takes or repays a loan.</summary>
+    public static event Action<LoanChangedEvent>? OnLoanChanged;
+
+    /// <summary>Fired when a service fee is adjusted.</summary>
+    public static event Action<ServiceFeeChangedEvent>? OnServiceFeeChanged;
+
     // -------------------------------------------------------------------------
     // Internal fire methods — only Patch classes should call these.
     // -------------------------------------------------------------------------
@@ -73,4 +85,8 @@ public static class EventBus
     internal static void FireBuildingUpgraded(BuildingUpgradedEvent e) => OnBuildingUpgraded?.Invoke(e);
     internal static void FireBudgetChanged(BudgetChangedEvent e)  => OnBudgetChanged?.Invoke(e);
     internal static void FirePolicyChanged(PolicyChangedEvent e)  => OnPolicyChanged?.Invoke(e);
+    internal static void FireTaxRateChanged(TaxRateChangedEvent e) => OnTaxRateChanged?.Invoke(e);
+    internal static void FireResourceTaxRateChanged(ResourceTaxRateChangedEvent e) => OnResourceTaxRateChanged?.Invoke(e);
+    internal static void FireLoanChanged(LoanChangedEvent e)      => OnLoanChanged?.Invoke(e);
+    internal static void FireServiceFeeChanged(ServiceFeeChangedEvent e) => OnServiceFeeChanged?.Invoke(e);
 }

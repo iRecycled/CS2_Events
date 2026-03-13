@@ -1,6 +1,7 @@
 using System.Reflection;
 using Colossal.Logging;
 using CS2Hooks.Actions.Apply;
+using CS2Hooks.Events;
 using Game;
 using Game.Modding;
 using Game.Tools;
@@ -27,6 +28,13 @@ public class CS2HooksMod : IMod
         updateSystem.UpdateAt<BuildingApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<ZoneApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<NetCourseApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<EconomyDebounceSystem>(SystemUpdatePhase.PreTool);
+
+        // [TEST ONLY] economy appliers — remove before shipping
+        updateSystem.UpdateAt<TaxApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<LoanApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<ServiceFeeApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<BudgetApplier>(SystemUpdatePhase.PreTool);
 
         DebugLogger.Enable();
         TestHarness.Enable();

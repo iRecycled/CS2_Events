@@ -58,11 +58,23 @@ internal static class DebugLogger
                   $"                  Pos: {e.Position}");
 
         EventBus.OnBudgetChanged += e =>
-            Write($"[BUDGET CHANGED]  Service={e.ServicePrefab.Index} → {e.NewPercentage}%");
+            Write($"[BUDGET CHANGED]  Service={e.ServicePrefab.Index} {e.OldPercentage}% → {e.NewPercentage}%");
 
         EventBus.OnPolicyChanged += e =>
             Write($"[POLICY CHANGED]  Target={e.Target.Index} Policy={e.Policy.Index} " +
                   $"Active={e.Active} Adj={e.Adjustment}");
+
+        EventBus.OnTaxRateChanged += e =>
+            Write($"[TAX RATE]        {e.AreaType} {e.OldRate}% → {e.NewRate}%");
+
+        EventBus.OnResourceTaxRateChanged += e =>
+            Write($"[RESOURCE TAX]    {e.AreaType} Resource={e.Resource} {e.OldRate}% → {e.NewRate}%");
+
+        EventBus.OnLoanChanged += e =>
+            Write($"[LOAN CHANGED]    {e.OldAmount} → {e.NewAmount}");
+
+        EventBus.OnServiceFeeChanged += e =>
+            Write($"[SERVICE FEE]     {e.Resource} {e.OldFee:F2} → {e.NewFee:F2}");
 
         CS2HooksMod.Log.Info($"CS2Hooks: debug log → {_logPath}");
     }
