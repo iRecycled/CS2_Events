@@ -58,7 +58,7 @@ static class CommercialTaxPatch
     static void Prefix(TaxSystem __instance, Resource resource, int rate)
     {
         int oldRate = __instance.GetCommercialTaxRate(resource);
-        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Commercial, (int)resource, oldRate, rate);
+        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Commercial, EconomyUtils.GetResourceIndex(resource), oldRate, rate);
     }
 }
 
@@ -71,7 +71,7 @@ static class IndustrialTaxPatch
     static void Prefix(TaxSystem __instance, Resource resource, int rate)
     {
         int oldRate = __instance.GetIndustrialTaxRate(resource);
-        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Industrial, (int)resource, oldRate, rate);
+        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Industrial, EconomyUtils.GetResourceIndex(resource), oldRate, rate);
     }
 }
 
@@ -84,6 +84,6 @@ static class OfficeTaxPatch
     static void Prefix(TaxSystem __instance, Resource resource, int rate)
     {
         int oldRate = __instance.GetOfficeTaxRate(resource);
-        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Office, (int)resource, oldRate, rate);
+        EconomyDebounceSystem.RecordResourceTaxChange(TaxAreaType.Office, EconomyUtils.GetResourceIndex(resource), oldRate, rate);
     }
 }

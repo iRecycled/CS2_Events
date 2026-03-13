@@ -34,7 +34,7 @@ public class CS2HooksMod : IMod
         updateSystem.UpdateAt<TaxApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<LoanApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<ServiceFeeApplier>(SystemUpdatePhase.PreTool);
-        updateSystem.UpdateAt<BudgetApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<BudgetApplier>(SystemUpdatePhase.UIUpdate);
 
         DebugLogger.Enable();
         TestHarness.Enable();

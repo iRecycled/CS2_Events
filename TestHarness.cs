@@ -134,8 +134,10 @@ internal static class TestHarness
 
     private static void OnResourceTaxRateChanged(ResourceTaxRateChangedEvent e)
     {
-        // Resource-level sliders fire the parent area's TaxRateChanged too,
-        // so debouncing at the area level is sufficient.
+        if (TaxApplier.IsApplying) return;
+        DebugLogger.Write($"[TESTHARNESS]     resource tax {e.AreaType}:{e.Resource} {e.OldRate}%→{e.NewRate}% — reverting then re-applying");
+        TaxApplier.EnqueueResource(e.AreaType, e.Resource, e.OldRate, delayFrames: 0);  // revert
+        TaxApplier.EnqueueResource(e.AreaType, e.Resource, e.NewRate, delayFrames: 60); // re-apply
     }
 
     private static void OnLoanChanged(LoanChangedEvent e)
