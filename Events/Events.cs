@@ -2,6 +2,7 @@ using Colossal.Mathematics;
 using Game.City;
 using Game.Economy;
 using Game.Prefabs;
+using Game.Routes;
 using Game.Simulation;
 using Game.Tools;
 using Unity.Entities;
@@ -270,4 +271,54 @@ public record ServiceFeeChangedEvent(
     PlayerResource Resource,
     float          OldFee,
     float          NewFee
+);
+
+// ---------------------------------------------------------------------------
+// Transport lines
+// ---------------------------------------------------------------------------
+
+/// <summary>
+/// Fired on each stop confirmation and when the route loop is closed.
+/// </summary>
+/// <param name="Prefab">The route prefab used, or null if unavailable.</param>
+/// <param name="PrefabEntity">The ECS entity for the route prefab (stable within a session).</param>
+/// <param name="TransportType">Bus, Train, Tram, Ship, Subway, etc.</param>
+/// <param name="IsModification">
+/// <c>true</c> if a stop was added/moved on an existing line;
+/// <c>false</c> if this is a brand-new line being created.
+/// </param>
+/// <param name="IsComplete">
+/// <c>true</c> when the route loop is closed (full line committed);
+/// <c>false</c> for each individual stop confirmed mid-placement.
+/// </param>
+/// <param name="WaypointPositions">World-space positions of the confirmed stops so far, in order.</param>
+/// <param name="WaypointSnapEntities">
+/// The stop building entity each waypoint snapped to (Entity.Null if none).
+/// Parallel array to <see cref="WaypointPositions"/>.
+/// </param>
+public record TransportLinePlacedEvent(
+    RoutePrefab?  Prefab,
+    Entity        PrefabEntity,
+    TransportType TransportType,
+    bool          IsModification,
+    bool          IsComplete,
+    float3[]      WaypointPositions,
+    Entity[]      WaypointSnapEntities
+);
+
+/// <summary>
+/// Fired when the player activates or deactivates a transport line via the
+/// "Deactivate" toggle in the selected-info panel (ActionsSection) or the
+/// Lines Overview panel (LinesSection).
+/// </summary>
+/// <param name="Line">The transport route entity being toggled.</param>
+/// <param name="Policy">The "Route Out of Service" policy prefab entity.</param>
+/// <param name="Active">
+/// <c>true</c> if the line is being put back into service;
+/// <c>false</c> if the line is being taken out of service.
+/// </param>
+public record TransportLineToggledEvent(
+    Entity Line,
+    Entity Policy,
+    bool   Active
 );

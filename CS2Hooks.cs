@@ -73,6 +73,18 @@ public static class EventBus
     /// <summary>Fired when a service fee is adjusted.</summary>
     public static event Action<ServiceFeeChangedEvent>? OnServiceFeeChanged;
 
+    /// <summary>
+    /// Fired when the route tool commits a new transport line or adds/moves
+    /// a stop on an existing line.
+    /// </summary>
+    public static event Action<TransportLinePlacedEvent>? OnTransportLinePlaced;
+
+    /// <summary>
+    /// Fired when a transport line is activated or deactivated via the
+    /// selected-info panel toggle or the Lines Overview panel.
+    /// </summary>
+    public static event Action<TransportLineToggledEvent>? OnTransportLineToggled;
+
     // -------------------------------------------------------------------------
     // Internal fire methods — only Patch classes should call these.
     // -------------------------------------------------------------------------
@@ -89,4 +101,6 @@ public static class EventBus
     internal static void FireResourceTaxRateChanged(ResourceTaxRateChangedEvent e) => OnResourceTaxRateChanged?.Invoke(e);
     internal static void FireLoanChanged(LoanChangedEvent e)      => OnLoanChanged?.Invoke(e);
     internal static void FireServiceFeeChanged(ServiceFeeChangedEvent e) => OnServiceFeeChanged?.Invoke(e);
+    internal static void FireTransportLinePlaced(TransportLinePlacedEvent e)   => OnTransportLinePlaced?.Invoke(e);
+    internal static void FireTransportLineToggled(TransportLineToggledEvent e) => OnTransportLineToggled?.Invoke(e);
 }

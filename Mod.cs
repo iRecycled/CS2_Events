@@ -28,6 +28,7 @@ public class CS2HooksMod : IMod
         updateSystem.UpdateAt<BuildingApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<ZoneApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<NetCourseApplier>(SystemUpdatePhase.PreTool);
+        updateSystem.UpdateAt<RouteApplier>(SystemUpdatePhase.PreTool);
         updateSystem.UpdateAt<EconomyDebounceSystem>(SystemUpdatePhase.PreTool);
 
         // [TEST ONLY] economy/policy appliers — remove before shipping
@@ -70,6 +71,7 @@ public class CS2HooksMod : IMod
               BindingFlags.NonPublic | BindingFlags.Instance);
         Check(typeof(ObjectToolSystem),                 "Apply",       priv);
         Check(typeof(UpgradeToolSystem),                "Apply",       priv);
+        Check(typeof(RouteToolSystem),                  "Apply",       priv);
         Check(typeof(Game.Simulation.CityServiceBudgetSystem), "SetServiceBudget",
               BindingFlags.Public | BindingFlags.Instance);
         Check(typeof(Game.UI.InGame.PoliciesUISystem),  "SetPolicy",

@@ -33,9 +33,10 @@ static class NetCourseApplyPatch
 
     static void Prefix(ToolOutputSystem __instance)
     {
-        if (!NetCourseApplier.PendingApply) return;
+        if (!NetCourseApplier.PendingApply && !RouteApplier.PendingApply) return;
 
         NetCourseApplier.PendingApply = false;
+        RouteApplier.PendingApply     = false;
 
         // Count Temp+Edge entities so we can verify GenerateNodes/Edges ran in frame N.
         var em = NetCourseApplier.SharedEntityManager;

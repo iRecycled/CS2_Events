@@ -53,9 +53,35 @@ internal static class TestHarness
         EventBus.OnLoanChanged            += OnLoanChanged;
         EventBus.OnServiceFeeChanged      += OnServiceFeeChanged;
         EventBus.OnPolicyChanged          += OnPolicyChanged;
+        EventBus.OnTransportLinePlaced    += OnTransportLinePlaced;
+        EventBus.OnTransportLineToggled   += OnTransportLineToggled;
 
         DebugLogger.Write("[TESTHARNESS]     enabled — place a building, zone, or road then bulldoze to re-apply");
         DebugLogger.Write("[TESTHARNESS]     economy: change tax/loan/fee to trigger revert → re-apply test");
+    }
+
+    private static void OnTransportLinePlaced(TransportLinePlacedEvent e)
+    {
+        if (!e.IsComplete)
+        {
+            DebugLogger.Write($"[TESTHARNESS]     stop placed: type={e.TransportType} stops so far={e.WaypointPositions.Length}");
+            return;
+        }
+        DebugLogger.Write($"[TESTHARNESS]     line complete: type={e.TransportType} prefab='{e.Prefab?.name}' stops={e.WaypointPositions.Length} — deleting in ~1s, re-adding in ~2s");
+        RouteApplier.Enqueue(e, deleteAfterFrames: 60, recreateAfterFrames: 60);
+    }
+
+    private static void OnTransportLineToggled(TransportLineToggledEvent e)
+    {
+        if (PolicyApplier.IsApplying) return;
+        if (PolicyApplier.HasPending(e.Line, e.Policy)) return;
+        DebugLogger.Write($"[TESTHARNESS]     transport line {e.Line.Index} toggled active={e.Active} — reverting then re-applying");
+        // Revert (restore old state) after ~1s, then re-apply (new state) after ~2s.
+        // active=true means line running → out-of-service policy is inactive (active=false)
+        // active=false means line stopped → out-of-service policy is active (active=true)
+        bool outOfService = !e.Active;
+        PolicyApplier.Enqueue(e.Line, e.Policy, !outOfService, 0f, delayFrames: 60);  // revert
+        PolicyApplier.Enqueue(e.Line, e.Policy,  outOfService, 0f, delayFrames: 120); // re-apply
     }
 
     private static void OnBuildingPlaced(BuildingPlacedEvent e)
